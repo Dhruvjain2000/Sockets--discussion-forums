@@ -24,5 +24,9 @@ io.on('connection',function (socket) {
     io.sockets.emit('chat',data);//Sending data from server to other clients which was provided some other client
 
   })
+  // Handle typing event
+    socket.on('typing', function(data){
+        socket.broadcast.emit('typing', data);
+})
 
 })
