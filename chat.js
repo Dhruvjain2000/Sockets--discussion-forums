@@ -3,33 +3,36 @@
 //Make connection
 
 //We have access to io variable because of the fact that i loaded it into index.html and both of these files are for front end
-var socket=io.connect('http://localhost:4000');
+// Make connection
+var socket = io.connect('http://localhost:4000');
 
+// Query DOM
+var message = document.getElementById('message'),
+      handle = document.getElementById('handle'),
+      btn = document.getElementById('send'),
+      output = document.getElementById('output'),
+      feedback = document.getElementById('feedback');
 
-//Query DOM
-
-var message =document.getElementById('message');
-var handle =document.getElementById('handle');
-var output =document.getElementById('output');
-var btn =document.getElementById('send');
-
-//Emit Events
-//Sending Data to Server When User Clicks On the button after filling the message and handle fields
-
-
-/************************************************This event listner is not working *********************************************/
-btn.addEventListner('click',function(){
- console.log("Event listner is fine");
-socket.emit('chat',{  message :message.value, handle :handle.value
-});
-   message.value = "";
+// Emit events
+btn.addEventListener('click', function(){
+    socket.emit('chat', {
+        message: message.value,
+        handle: handle.value
+    });
+    message.value = "";
 });
 
-//Listen for Events
-
-socket.on('chat',function(data){
-  output.innerHTML +='<p><bold>' + data.handle +': </bold>' + data.message +'</p';
+message.addEventListener('keypress', function(){
+    socket.emit('typing', handle.value);
 })
+
+// Listen for events
+socket.on('chat', function(data){
+    feedback.innerHTML = '';
+    output.innerHTML += '<p><strong>' + data.handle + ': </strong>' + data.message + '</p>';
+});
+
 socket.on('typing', function(data){
     feedback.innerHTML = '<p><em>' + data + ' is typing a message...</em></p>';
 });
+
